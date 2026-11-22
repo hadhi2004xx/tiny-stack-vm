@@ -30,11 +30,6 @@ function run(g,inp){
     case 6:D[sp]=D[sp-2];sp++;break;
     case 7:{const a=D[sp-3];D[sp-3]=D[sp-2];D[sp-2]=D[sp-1];D[sp-1]=a;break;}
     case 23:case 27:D[sp-1]=b===23?-D[sp-1]|0:~D[sp-1];break;
-    case 16:case 17:case 18:case 19:case 20:case 21:case 22:case 24:case 25:case 26:case 28:case 29:case 30:case 32:case 33:case 34:{
-      const y=D[sp-1],a=D[sp-2];
-      if(!y&&b>18&&b<23)return fin(4);
-      sp-=2;D[sp++]=F[b-16](a,y);break;
-    }
     case 48:case 49:case 50:{
       const rel=((g[pc-2]|g[pc-1]<<8)<<16)>>16;
       if(b===48||(D[--sp]===0)===(b===49))pc+=rel;
@@ -57,10 +52,10 @@ function run(g,inp){
       sp-=2;M[a]=v;break;
     }
     case 80:{
-      const s=String(D[sp-1]);
+      const s=''+D[sp-1];
       if(ol+s.length>65536)return fin(11);
       sp--;
-      for(let i=0;i<s.length;i++)o[ol++]=s.charCodeAt(i);
+      for(const c of s)o[ol++]=c.charCodeAt(0);
       break;
     }
     case 81:
@@ -68,6 +63,11 @@ function run(g,inp){
       o[ol++]=D[--sp]&255;break;
     case 82:D[sp++]=ip<inp.length?inp[ip++]:-1;break;
     case 83:return fin(D[--sp]&255);
+    default:{ // binary ops: every other opcode is a case above
+      const y=D[sp-1],a=D[sp-2];
+      if(!y&&b>18&&b<23)return fin(4);
+      sp-=2;D[sp++]=F[b-16](a,y);
+    }
     }
   }
 }
